@@ -44,6 +44,12 @@
                       type="danger"
                       @click="handleDelete(scope.$index, scope.row)"
                     >Eliminar</el-button>
+                    <el-button
+                      size="mini"
+                      type="primary"
+                      @click="handleFormulario(scope.$index, scope.row)"
+                      icon="el-icon-document"
+                    >Formulario</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -103,13 +109,16 @@
             <el-tab-pane label="Campos">Campos</el-tab-pane>
           </el-tabs>
           <el-pagination
-            v-if="tableData > 0"
+            v-if="tableData.length > 0"
             style="padding-bottom:20px;"
             layout="prev, pager, next"
-            :page-size="2"
+            :page-size="pagination.pageSize"
             :page-count="pagination.count"
             :current-page="pagination.currentPage"
             :total="tableData.lenght"
+            @current-change="currentChange"
+            @prev-click="prev"
+            @next-click="next"
           ></el-pagination>
         </el-tab-pane>
         <el-tab-pane label="Configuración" name="second"></el-tab-pane>
@@ -157,16 +166,44 @@ export default {
       tableData: [],
       loading: false,
       dialogVisible: false,
-      dialogFormVisible: false
+      dialogFormVisible: false,
+      filterData: []
     };
   },
   methods: {
     getData() {
       //let loadingInstance = Loading.service({})
       getPlantillas().then(response => {
-        // console.log("datos->", response.data)
-        this.tableData = response.data;
+        this.filterData = response.data;
+        let length = parseInt(response.data.length - 1);
+        let pageSize = parseInt(this.pagination.pageSize);
+        let count = Math.ceil(length / pageSize);
+        this.pagination.count = count;
+        this.filterTable();
       });
+    },
+    filterTable() {
+      let index = (this.pagination.currentPage - 1) * this.pagination.pageSize;
+      this.tableData = this.filterData.slice(
+        index,
+        index + this.pagination.pageSize
+      );
+    },
+    prev(e) {
+      this.pagination.currentPage = e;
+      this.filterTable();
+    },
+    next(e) {
+      this.pagination.currentPage = e;
+      this.filterTable();
+    },
+    currentChange(e) {
+      this.pagination.currentPage = e;
+      this.filterTable();
+    },
+    handleFormulario(index, row) {
+      this.$router.push({ path: "form/" + row.id });
+      // row.id
     },
     handleQueryID(row) {
       getIDPlantillas(row.id).then(response => {
@@ -228,7 +265,7 @@ export default {
             this.create.nombre = null;
             this.$message({
               type: "success",
-              message: "Se agregado un registo!!"
+              message: "Se a agregado un registro!!"
             });
           });
         } else {
