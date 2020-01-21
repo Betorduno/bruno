@@ -10,19 +10,46 @@
             <el-table-column prop="fecha_fin" label="Fecha_fin" width="120"></el-table-column>
             <el-table-column fixed="right" label="Operaciones" width="300">
               <template slot-scope="scope">
-                <el-button
-                  type="primary"
-                  @click="handleEditar(scope.$index, scope.row)"
-                  size="small"
-                >Editar</el-button>
-                <el-button
-                  type="danger"
-                  @click="handleDelete(scope.$index, scope.row)"
-                  size="small"
-                >Eliminar</el-button>
+                <el-button type="primary" @click="handleQueryID(scope.row)" size="small">Editar</el-button>
+                <el-button type="danger" @click="handleDelete(scope.row)" size="small">Eliminar</el-button>
               </template>
             </el-table-column>
           </el-table>
+
+          <el-dialog title="Shipping address" :visible.sync="dialogUpdate">
+            <el-form :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+              <el-form-item label="Fecha Inicio" required>
+                <el-col :span="11">
+                  <el-form-item>
+                    <el-date-picker
+                      v-model="updateData.fecha_inicio"
+                      type="date"
+                      placeholder="Ingrese fecha inicio"
+                      style="width: 100%;"
+                    ></el-date-picker>
+                  </el-form-item>
+                </el-col>
+              </el-form-item>
+              <el-form-item label="Fecha Fin" required>
+                <el-col :span="11">
+                  <el-form-item>
+                    <el-date-picker
+                      v-model="updateData.fecha_fin"
+                      type="date"
+                      placeholder="Ingrese fecha fin"
+                      style="width: 100%;"
+                    ></el-date-picker>
+                  </el-form-item>
+                </el-col>
+              </el-form-item>
+            </el-form>
+
+            <span slot="footer" class="dialog-footer">
+              <el-button @click="dialogUpdate = false">Cancelar</el-button>
+              <el-button type="primary" @click="handleUpdate()">Actualizar</el-button>
+            </span>
+          </el-dialog>
+
           <el-row>
             <el-col :span="24">
               <div class="grid-content bg-purple-dark buttonCreate">
@@ -34,7 +61,7 @@
                   circle
                 ></el-button>
                 <!-- *********************formulario crear registro*********************** -->
-                <el-dialog title="Shipping address" :visible.sync="dialogFormVisible">
+                <el-dialog :title="dataPlantilla.nombre" :visible.sync="dialogFormVisible">
                   <el-form
                     :model="createData"
                     :rules="rules"
@@ -44,7 +71,7 @@
                   >
                     <el-form-item label="Fecha Inicio" required>
                       <el-col :span="11">
-                        <el-form-item prop="fecha_inicio">
+                        <el-form-item prop="formatDate(fecha_inicio)">
                           <el-date-picker
                             type="date"
                             placeholder="Fecha inicio"
@@ -67,7 +94,7 @@
                         </el-form-item>
                       </el-col>
                     </el-form-item>
-                    <el-form-item label="Plantilla" prop="id_plantilla">
+                    <!-- <el-form-item label="Plantilla" prop="id_plantilla">
                       <el-col :span="8">
                         <el-select
                           v-model="createData.id_plantilla"
@@ -81,14 +108,10 @@
                           ></el-option>
                         </el-select>
                       </el-col>
-                    </el-form-item>
+                    </el-form-item>-->
                     <el-form-item label="Usuario" prop="id_usuario">
                       <el-input v-model="createData.id_usuario"></el-input>
                     </el-form-item>
-                    <!-- <el-form-item>
-                      <el-button type="primary" @click="submitForm('ruleForm')">Create</el-button>
-                      <el-button @click="resetForm('ruleForm')">Reset</el-button>
-                    </el-form-item>-->
                   </el-form>
 
                   <span slot="footer" class="dialog-footer">
@@ -107,8 +130,17 @@
   </div>
 </template>
 <script>
-import { getFormulario, getPlantillas } from "../../utils/crud";
-import moment from 'moment';
+import {
+  getFormulario,
+  getIDPlantillas,
+  validateFecha,
+  createFormulario,
+  formatDate,
+  deleteFormulario,
+  updateFormulario
+} from "../../utils/crud";
+import moment from "moment";
+import { log } from "util";
 export default {
   data() {
     return {
@@ -118,8 +150,9 @@ export default {
         fecha_inicio: null,
         fecha_fin: null,
         id_plantilla: null,
-        id_usuario: "676912f3-d0cc-476e-9350-46820dc0a7e81"
+        id_usuario: null
       },
+      dialogUpdate: false,
       dialogFormVisible: false,
       formLabelWidth: "120px",
       rules: {
@@ -147,36 +180,86 @@ export default {
           }
         ]
       },
-      dataPlantilla: []
+      dataPlantilla: [],
+      updateData: {
+        id: null,
+        fecha_inicio: null,
+        fecha_fin: null
+      }
     };
   },
   methods: {
     getData() {
       getFormulario(this.id).then(response => {
         this.tableData = response.data;
+        this.tableData.map(data => {
+          // console.log("......>", data);
+        });
       });
-      getPlantillas().then(response => {
+      getIDPlantillas(this.id).then(response => {
         this.dataPlantilla = response.data;
-        // console.log(this.dataPlantilla);
+        this.createData.id_plantilla = response.data.id;
       });
     },
-    handleEditar(index, row) {
-      // console.log(">>>>>>>>>", row);
+    handleQueryID(row) {
+      this.dialogUpdate = true;
+      let data = this.tableData.filter(f => f.id == row.id);
+      if (data) {
+        this.updateData.id = data[0].id;
+        this.updateData.fecha_inicio = data[0].fecha_inicio;
+        this.updateData.fecha_fin = data[0].fecha_fin;
+      }
     },
-    handleUpdate(index, row) {
-      // console.log(">>>>>>>>>", row);
+    handleUpdate() {
+      updateFormulario(this.updateData).then(response => {});
     },
-    handleDelete(index, row) {
-      // console.log(">>>>>>>>>", row);
+    handleDelete(row) {
+      this.$confirm(
+        "Esto eliminará permanentemente el registro, desea continuar?",
+        "Warning",
+        {
+          confirmButtonText: "OK",
+          cancelButtonText: "Cancelar",
+          type: "warning"
+        }
+      )
+        .then(() => {
+          deleteFormulario(row.id).then(data => {
+            this.getData();
+            this.$message({
+              type: "success",
+              message: "Eliminado!!"
+            });
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "Cancelado!!"
+          });
+        });
     },
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          let fechaIni = moment(this.createData.fecha_inicio).format("DD/MM/YYYY");
-          let fecha_fin = moment(this.createData.fecha_fin).format("DD/MM/YYYY");
-          console.log('---->', fechaIni)
-          // validateFecha(this.createData.fecha_inicio,this.createData.fecha_fin)
-    
+          let fechaI = moment(this.createData.fecha_inicio);
+          let fechaF = moment(this.createData.fecha_fin);
+          // this.createData.fecha_inicio = fechaI.format("YYYY-MM-DD");
+          // this.createData.fecha_fin = fechaF.format("YYYY-MM-DD");
+
+          if (validateFecha(fechaI, fechaF)) {
+            createFormulario(this.createData).then(response => {
+              console.log("console->", response);
+              this.dialogFormVisible = false;
+            });
+            // console.log('-ZZZZZZZ', this.createData)
+          } else {
+            this.$message({
+              type: "info",
+              message: "Por favor verifique las fechas de inicio y fin!"
+            });
+          }
+          //
         } else {
           console.log("error submit!!");
           return false;

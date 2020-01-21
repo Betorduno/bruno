@@ -4,7 +4,10 @@ import { interopDefault } from './utils'
 import scrollBehavior from './router.scrollBehavior.js'
 
 const _b7533ec2 = () => interopDefault(import('../pages/create.vue' /* webpackChunkName: "pages/create" */))
+const _d8c31a92 = () => interopDefault(import('../pages/listUsers.vue' /* webpackChunkName: "pages/listUsers" */))
 const _d50334c8 = () => interopDefault(import('../pages/main.vue' /* webpackChunkName: "pages/main" */))
+const _dabdb2a2 = () => interopDefault(import('../pages/recordPassword.vue' /* webpackChunkName: "pages/recordPassword" */))
+const _65e12c06 = () => interopDefault(import('../pages/register.vue' /* webpackChunkName: "pages/register" */))
 const _7bdd5d5c = () => interopDefault(import('../pages/form/_id.vue' /* webpackChunkName: "pages/form/_id" */))
 const _0879ac02 = () => interopDefault(import('../pages/index.vue' /* webpackChunkName: "pages/index" */))
 
@@ -29,9 +32,21 @@ export const routerOptions = {
     component: _b7533ec2,
     name: "create"
   }, {
+    path: "/listUsers",
+    component: _d8c31a92,
+    name: "listUsers"
+  }, {
     path: "/main",
     component: _d50334c8,
     name: "main"
+  }, {
+    path: "/recordPassword",
+    component: _dabdb2a2,
+    name: "recordPassword"
+  }, {
+    path: "/register",
+    component: _65e12c06,
+    name: "register"
   }, {
     path: "/form/:id?",
     component: _7bdd5d5c,

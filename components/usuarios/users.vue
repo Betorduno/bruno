@@ -1,0 +1,101 @@
+<template>
+    <div>
+        <el-container>
+            <el-main>
+                <el-row>
+                    <el-col :span="24"><div class="grid-content bg-purple-dark"><h1 style="text-align: left; font-size: 200%;">Lista de usuarios</h1><br></div></el-col>
+                </el-row>
+                <el-container> 
+                    <div class="tablePage">
+                        <el-table :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase())||data.date.toLowerCase().includes(search.toLowerCase()))" style="width: 100%">
+                            <el-table-column label="Date" prop="date">
+                            </el-table-column>
+                            <el-table-column label="Name" prop="name">
+                            </el-table-column>
+                            <el-table-column align="right">
+                                <template slot="header" slot-scope="scope">
+                                    <el-input v-model="search" size="mini" placeholder="Escribe para buscar"/>
+                                </template>
+                                <template slot-scope="scope">
+                                    <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">Editar</el-button>
+                                    <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                        <br>
+                        <el-row>
+                            <el-col :span="9">
+                                <div style="text-align: left;">
+                                    <el-button type="primary" icon="el-icon-plus" circle></el-button>
+                                </div>
+                            </el-col>
+                            <el-col :span="15">
+                                <div  style="text-align: left;">
+                                    <el-pagination small layout="prev, pager, next" :total="50">
+                                    </el-pagination>
+                                </div>
+                            </el-col>
+                        </el-row>
+                    </div>
+                </el-container>
+            </el-main>
+        </el-container>
+    </div>
+</template>
+<script>
+    export default {
+        data() {
+        return {
+            tableData: [
+                {
+                    date: '2016-05-03',
+                    name: 'Tom',
+                    address: 'No. 189, Grove St, Los Angeles'
+                    }, {
+                    date: '2016-05-02',
+                    name: 'Tom',
+                    address: 'No. 189, Grove St, Los Angeles'
+                    }, {
+                    date: '2016-05-04',
+                    name: 'Alberto',
+                    address: 'No. 189, Grove St, Los Angeles'
+                    }, {
+                    date: '2020-05-01',
+                    name: 'Tom',
+                    address: 'No. 189, Grove St, Los Angeles'
+                    }
+            ],
+            search: ''
+        }
+        },
+        methods: {
+        handleEdit(index, row) {
+            console.log(index, row);
+        },
+        handleDelete(index, row) {
+            console.log(index, row);
+        }
+        }
+    }
+</script>
+<style>
+    .el-header{
+        background-color: #303133 !important;
+
+    }
+    .el-main{
+        padding: 50px;
+        margin:auto;
+        text-align: center;
+        min-height: 500px;
+        width: 60%;
+        background-color: #fff;
+    }
+    .el-main .tablePage{
+        width: 100%
+    }
+    
+    .el-footer{
+        background-color: #303133 !important;
+    }
+</style>
