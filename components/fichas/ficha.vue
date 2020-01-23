@@ -30,7 +30,7 @@
           </el-form>
           <!---formulario actualizar-->
 
-          <el-form v-if="visibleUpdate" :model="dataAll" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+          <el-form v-if="visibleUpdate" :model="dataAll" :rules="rules" ref="ruleForm" label-width="120px" style="width: 70%;" class="demo-ruleForm">
             <el-form-item label="ID" prop="id" disabled="true">
               <el-input v-model="dataAll.id"></el-input>
             </el-form-item>
