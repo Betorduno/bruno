@@ -2,17 +2,59 @@
   <div>
     <el-tabs tab-position="left" type="border-card">
       <el-tab-pane label="Espacial" height="100">
-        <el-table :data="tableData" style="width: 800px">
-          <el-table-column prop="titulo" width="400">
-          </el-table-column>
-          <el-table-column prop="data"  width="400">
-          </el-table-column>
-        </el-table>
-        <br>
-        <el-button type="success" plain>Actualizar</el-button>
-        <el-button type="info" @click="imprimir()" plain>Imprimir</el-button>
+          <el-form v-if="visibleForm" ref="form" v-for="data in tableData" label-width="120px">
+              <br>
+              <el-form-item label="ID">
+                <el-tag type="info">{{data.id}}</el-tag>
+              </el-form-item>
+              <el-form-item label="Latitud">
+                <el-tag type="info">{{data.latitud}}</el-tag>
+              </el-form-item>
+              <el-form-item label="Longitud">
+                <el-tag type="info">{{data.longitud}}</el-tag>
+              </el-form-item>
+              <el-form-item label="Usuario">
+                <span v-if="data.id_usuario!=null"><el-tag type="info">{{data.id_usuario}}</el-tag></span>
+                <span v-else><el-tag type="info">Ninguno</el-tag></span>
+              </el-form-item>
+              <el-form-item label="Formulario">
+                <el-tag type="info"> {{data.id_formulario}}</el-tag>
+              </el-form-item>
+              <el-form-item label="Plantilla">
+                <el-tag type="info" :onload="searchPlantilla(data.id_plantilla)" >{{ids.plantilla}}</el-tag>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click="visibleForm=false; visibleUpdate=true;">Editar</el-button>
+                <el-button @click="imprimir()">Impirmir</el-button>
+              </el-form-item>
+          </el-form>
+          
+
+
+
+          <el-form v-if="visibleUpdate" :model="dataAll" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+            <el-form-item label="ID" prop="id" disabled="true">
+              <el-input v-model="dataAll.id"></el-input>
+            </el-form-item>
+            <el-form-item label="Latitud" prop="latitud">
+              <el-input v-model="dataAll.latitud"></el-input>
+            </el-form-item>
+            <el-form-item label="Longitud" prop="longitud">
+              <el-input v-model="dataAll.longitud"></el-input>
+            </el-form-item>
+            <el-form-item label="Plantilla" prop="id_plantilla">
+              <el-select  v-model="dataAll.id_plantilla" placeholder="Plantillas">
+                <el-option  v-for="p in plantilla" :value="p.id">{{p.nombre}}</el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="submitForm('ruleForm')">Create</el-button>
+              <el-button @click="visibleUpdate=false; visibleForm= true;">Cancelar</el-button>
+            </el-form-item>
+          </el-form>
       </el-tab-pane>
-      <el-tab-pane label="Ocupante"></el-tab-pane>
+      <el-tab-pane label="Ocupante">
+      </el-tab-pane>
       <el-tab-pane label="Predio"></el-tab-pane>
       <el-tab-pane label="Cultivo Principal"></el-tab-pane>
       <el-tab-pane label="Mercado"></el-tab-pane>
@@ -37,39 +79,103 @@
 </style>
 
 <script>
+import { getFichas, getIDPlantillas,getPlantillas } from '../../utils/crud.js'
 export default {
   data() {
     
     return {
-      tableData: [{
-          titulo: 'Elaborado por:',
-          data: 'Alberto'
-        }, {
-          titulo: 'Coordenados:',
-          data: 'sur-norte '
-        }, {
-          titulo: 'Municipio:',
-          data: 'Tamalito'
-        }, {
-          titulo: 'Vereda:',
-          data: 'puntapie'
-        },
-        {
-          titulo: 'Estado:',
-          data: 'Cerrada'
-        }]
-    };
-  },
+      tableData: [],
+      visibleForm: true,
+      visibleUpdate: false,
+      ids:{
+        plantilla:''
+      },
+      dataAll:{
+          id: '',
+          latitud: '',
+          longitud: '',
+          id_usuario: '',
+          id_formulario: '',
+          id_plantilla: ''
+      },
+      rules: {
+          id: [
+            { required: true, message: 'Ingrese el ID', trigger: 'blur' },
+            {  message: 'Length should be 3 to 5', trigger: 'blur' }
+          ],
+          latitud: [
+            { required: true, message: 'Ingrese latitud', trigger: 'blur' },
+            {  message: 'Length should be 3 to 5', trigger: 'blur' }
+          ],
+          longitud: [
+            { required: true, message: 'Ingrese longitud', trigger: 'blur' },
+            {  message: 'Length should be 3 to 5', trigger: 'blur' }
+          ],
+          id_plantilla: [
+            { required: true, message: 'Ingrese una plantilla', trigger: 'change' }
+          ]
+        }, 
+        plantilla:[]
+      }
+    },
   methods: {
     imprimir() {
       window.print();
+    }, 
+    getData(){
+      getFichas().then((response)=>{
+        console.log('datos--->', response.data );
+        this.tableData = response.data;
+        this.dataAll.id = response.data[0].id;
+        this.dataAll.latitud = response.data[0].latitud;
+        this.dataAll.longitud = response.data[0].longitud;
+        this.dataAll.id_usuario = response.data[0].id_usuario;
+        this.dataAll.id_formulario = response.data[0].id_formulario;
+        this.dataAll.id_plantilla = response.data[0].id_plantilla;
+      
+      })
     },
+    searchPlantilla(id){
+      getIDPlantillas(id).then((response)=>{
+        this.ids.id_plantilla= response.data.nombre;
+      })
+    },
+    searchAllPlantilla(){
+      getPlantillas().then((response)=>{
+        this.plantilla= response.data;
+      })
+    },
+    submitForm(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            // alert('submit!');
+            console.log('..............>',this.dataAll)
+          } else {
+            console.log('error submit!!');
+            
+            return false;
+          }
+        });
+      },
+      resetForm(formName) {
+        this.$refs[formName].resetFields();
+      },
     handleEdit(index, row) {
       console.log(index, row);
     },
     handleDelete(index, row) {
       console.log(index, row);
     }
-  }
+  },
+  mounted() {
+    this.getData();
+    this.searchAllPlantilla()
+    
+  },
 };
 </script>
+<style>
+.el-tag--info{
+  width: 50% !important;
+}
+</style>

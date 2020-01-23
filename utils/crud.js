@@ -6,7 +6,8 @@ import {
     TOKEN,
     FORM_URL,
     FORM_URL_BYPLANTILLA,
-    USERS_URL
+    USERS_URL,
+    FICHAS_URL
 } from './endpoints';
 import { async } from 'q';
 
@@ -121,7 +122,7 @@ export async function deleteFormulario(id) {
     })
 }
 export function updateFormulario(data) {
-    console.log('ººººº>', data)
+    // console.log('ººººº>', data)
     return axios({
         method: 'PUT',
         url: FORM_URL + '/' + data.id,
@@ -140,6 +141,126 @@ export function getUsuarios() {
         headers: {
             "Content-Type": "application/json",
             'Authorization': "Bearer " + TOKEN
+        }
+    })
+}
+//user crub
+export function getUser() {
+    return axios({
+        url: USERS_URL,
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            'Authorization': "Bearer " + TOKEN
+        }
+    })
+}
+export function getIDUser(id) {
+    return axios({
+        url: USERS_URL + '/' + id,
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            'Authorization': "Bearer " + TOKEN
+        }
+    })
+}
+export async function createUser(data) {
+    return await axios({
+        method: 'POST',
+        url: USERS_URL,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + TOKEN
+        },
+        data
+    })
+}
+
+export async function deleteUser(id) {
+    return await axios({
+        method: 'DELETE',
+        url: USERS_URL + '/' + id,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + TOKEN
+        }
+    })
+}
+export function updateUser(id, nombre) {
+    return axios({
+        method: 'PUT',
+        url: PLANTILLA_URL + '/' + id,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + TOKEN
+        },
+        data: {
+            id,
+            nombre
+        }
+    })
+}
+//fichas crub
+export function getFichas() {
+    return axios({
+        url: FICHAS_URL,
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            'Authorization': "Bearer " + TOKEN
+        }
+    })
+}
+export function getIDFichas(id) {
+    return axios({
+        url: FICHAS_URL + '/' + id,
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            'Authorization': "Bearer " + TOKEN
+        }
+    })
+}
+export async function createFichas(data) {
+    return await axios({
+        method: 'POST',
+        url: FICHAS_URL,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + TOKEN
+        },
+        data
+    })
+}
+
+export async function deleteFicha(id) {
+    return await axios({
+        method: 'DELETE',
+        url: FICHAS_URL + '/' + id,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + TOKEN
+        }
+    })
+}
+export function updateFicha(id, nombre) {
+    return axios({
+        method: 'PUT',
+        url: FICHAS_URL + '/' + id,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + TOKEN
+        },
+        data: {
+            id,
+            nombre
         }
     })
 }

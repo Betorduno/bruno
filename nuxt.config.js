@@ -1,3 +1,8 @@
+// import { BASE_URL } from 'utils/endpoints.js'
+// utils/endpoints.js
+// const consult = require('./utils/endpoints');
+
+
 module.exports = {
     mode: 'universal',
     /*
@@ -29,21 +34,50 @@ module.exports = {
     /*
      ** Plugins to load before mounting the App
      */
-    plugins: ['@/plugins/element-ui'],
+    plugins: [
+        '@/plugins/element-ui',
+        '@/plugins/vuelidate'
+    ],
     /*
      ** Nuxt.js dev-modules
      */
     buildModules: [],
+    // axios: {
+    //     baseURL: consult.BASE_URL
+    // },
     /*
      ** Nuxt.js modules
      */
     modules: [
         // Doc: https://bootstrap-vue.js.org
-        'bootstrap-vue/nuxt'
+        'bootstrap-vue/nuxt',
+        // '@nuxtjs/axios',
+        // '@nuxtjs/auth'
     ],
+    // router: {
+    //     // middleware: ['auth']
+    // },
+    // auth: {
+    //     strategies: {
+    //         local: {
+    //             endpoints: {
+    //                 login: { url: '/api/auth/login', method: 'post', propertyName: 'token' },
+    //                 logout: { url: '/api/auth/logout', method: 'post' },
+    //                 user: { url: '/api/auth/user', method: 'get', propertyName: 'user' }
+    //             },
+    //             tokenRequired: true,
+    //             tokenType: 'bearer'
+    //         }
+    //     }
+    // },
+    // server: {
+    //     port: 3000, // default: 3000
+    //     host: '0.0.0.0', // default: localhost
+    // },
     /*
      ** Build configuration
      */
+
     build: {
         /*
          ** You can extend webpack config here

@@ -7,10 +7,17 @@
                 </el-row>
                 <el-container> 
                     <div class="tablePage">
-                        <el-table :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase())||data.date.toLowerCase().includes(search.toLowerCase()))" style="width: 100%">
-                            <el-table-column label="Date" prop="date">
+                        <el-table :data="tableData.filter(data => !search || data.documento.toString().toLowerCase().includes(search.toLowerCase())||data.nombre.toLowerCase().includes(search.toLowerCase()))" style="width: 100%">
+                            <el-table-column label="CC" prop="documento">
                             </el-table-column>
-                            <el-table-column label="Name" prop="name">
+                            <el-table-column label="Nombre" prop="nombre">
+                            </el-table-column>
+                            <el-table-column label="Apellido" prop="apellido">
+                            </el-table-column>
+                            <el-table-column label="Rol" prop="rol">
+                            <template slot-scope="props"></template>
+                            </el-table-column>
+                            <el-table-column label="Email" prop="email">
                             </el-table-column>
                             <el-table-column align="right">
                                 <template slot="header" slot-scope="scope">
@@ -43,39 +50,31 @@
     </div>
 </template>
 <script>
+import { getUser } from '../../utils/crud.js'
     export default {
         data() {
         return {
-            tableData: [
-                {
-                    date: '2016-05-03',
-                    name: 'Tom',
-                    address: 'No. 189, Grove St, Los Angeles'
-                    }, {
-                    date: '2016-05-02',
-                    name: 'Tom',
-                    address: 'No. 189, Grove St, Los Angeles'
-                    }, {
-                    date: '2016-05-04',
-                    name: 'Alberto',
-                    address: 'No. 189, Grove St, Los Angeles'
-                    }, {
-                    date: '2020-05-01',
-                    name: 'Tom',
-                    address: 'No. 189, Grove St, Los Angeles'
-                    }
-            ],
+            tableData: [],
             search: ''
         }
         },
         methods: {
+        getData(){
+            getUser().then((response)=>{
+                this.tableData = response.data;
+                console.log("data--->", response.data)
+            })
+        },
         handleEdit(index, row) {
             console.log(index, row);
         },
         handleDelete(index, row) {
             console.log(index, row);
         }
-        }
+        },
+        mounted() {
+            this.getData();
+        },
     }
 </script>
 <style>

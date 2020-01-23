@@ -1,10 +1,6 @@
 <template>
   <div>
-    <div>
-      <el-tabs>
-        <el-tab-pane label="Maestros:"></el-tab-pane>
-      </el-tabs>
-    </div>
+    
     <div class="nav-width" style="padding: 70px">
       <el-tabs v-model="activeName">
         <el-tab-pane label="General" name="first">

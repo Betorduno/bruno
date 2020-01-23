@@ -1,4 +1,5 @@
 <template>
+
   <div class="main-grid">
     <style>
       :root {
@@ -21,7 +22,7 @@
           </span>
           <p class="text-uppercase font-w700 font-size-sm text-muted">{{ texts.subtitle }}</p>
 <!-- @changeInput="changeInput($event)" @submit="submit($event)" :loading="loading" :configAlert="configAlert" :user="user" -->
-           <formLogin />
+          <formLogin @changeInput="changeInput($event)" @submit="submit($event)"  :configAlert="configAlert" :user="user"/>
         </div>
       </div>
     </div>
@@ -37,13 +38,15 @@
         </p>
       </div>
     </div>
-    <!-- END Meta Info -->
   </div>
-</template>
+    <!-- END Meta Info -->
+    <!--<nuxt />-->
+    
 
+</template>
 <script>
-  import formLogin from '../components/Login/fromLogin';
-  import { login, errors } from '../utils/textConfig'
+import formLogin from '../components/Login/fromLogin';
+import { login, errors } from '../utils/textConfig'
   export default {
     auth: false,
     components: {
@@ -65,19 +68,21 @@
         this.user = event
       },
       async submit (event) {
-        let user = this.user
-        // this.loading = true
-        let response = this.$auth.loginWith('local', {
-          data: user
-        }).then((response) => {
-            // this.loading = false
-            //this.$router.push({ name: 'index' })
-            window.location.href = "/"
-        }).catch((err) => {
-          this.configAlert.dismissCountDown = this.configAlert.dismissSecs
-          this.configAlert.msg = errors.login.authentication
-          // this.loading = false
-        })
+        alert('que pasa')
+        // let user = this.user
+        // console.log('---->', user)
+        // // this.loading = true
+        // let response = this.$auth.loginWith('local', {
+        //   data: user
+        // }).then((response) => {
+        //     // this.loading = false
+        //     this.$router.push({ name: 'main' })
+        //     window.location.href = "/main"
+        // }).catch((err) => {
+        //   this.configAlert.dismissCountDown = this.configAlert.dismissSecs
+        //   this.configAlert.msg = errors.login.authentication
+        //   // this.loading = false
+        // })
       }
     }
   }
