@@ -249,18 +249,22 @@ export async function deleteFicha(id) {
         }
     })
 }
-export function updateFicha(id, nombre) {
+export function updateFicha(data) {
     return axios({
         method: 'PUT',
-        url: FICHAS_URL + '/' + id,
+        url: FICHAS_URL + '/' + data.id,
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + TOKEN
         },
         data: {
-            id,
-            nombre
+            id: data.id,
+            latitud: data.latitud,
+            longitud: data.longitud,
+            id_usuario: data.id_usuario,
+            id_formulario: data.id_formulario,
+            id_plantilla: data.id_plantilla
         }
     })
 }

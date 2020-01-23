@@ -21,16 +21,14 @@
                 <el-tag type="info"> {{data.id_formulario}}</el-tag>
               </el-form-item>
               <el-form-item label="Plantilla">
-                <el-tag type="info" :onload="searchPlantilla(data.id_plantilla)" >{{ids.plantilla}}</el-tag>
+                <el-tag type="info" :onload="searchPlantilla(data.id_plantilla)">{{ids.plant}}</el-tag>
               </el-form-item>
               <el-form-item>
                 <el-button type="primary" @click="visibleForm=false; visibleUpdate=true;">Editar</el-button>
                 <el-button @click="imprimir()">Impirmir</el-button>
               </el-form-item>
           </el-form>
-          
-
-
+          <!---formulario actualizar-->
 
           <el-form v-if="visibleUpdate" :model="dataAll" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
             <el-form-item label="ID" prop="id" disabled="true">
@@ -79,7 +77,12 @@
 </style>
 
 <script>
-import { getFichas, getIDPlantillas,getPlantillas } from '../../utils/crud.js'
+import {  
+        getFichas,
+        getIDPlantillas,
+        getPlantillas,
+        updateFicha
+      } from '../../utils/crud.js'
 export default {
   data() {
     
@@ -88,7 +91,7 @@ export default {
       visibleForm: true,
       visibleUpdate: false,
       ids:{
-        plantilla:''
+        plant:''
       },
       dataAll:{
           id: '',
@@ -136,8 +139,9 @@ export default {
       })
     },
     searchPlantilla(id){
+      console.log('sssssss',id)
       getIDPlantillas(id).then((response)=>{
-        this.ids.id_plantilla= response.data.nombre;
+        this.ids.plant= response.data.nombre;
       })
     },
     searchAllPlantilla(){
@@ -149,16 +153,28 @@ export default {
         this.$refs[formName].validate((valid) => {
           if (valid) {
             // alert('submit!');
-            console.log('..............>',this.dataAll)
+            updateFicha(this.dataAll)
+              .then((response)=>{
+                this.visibleUpdate = false;
+                this.visibleForm =true;
+                this.getData();
+                this.$message({
+                    type: "success",
+                    message: "Campos Actualizados!!"
+                  });
+              })
+              .catch(error=>{
+                  this.$message({
+                      type: "info",
+                      message: "Error al actualizar"
+                  });
+              })
           } else {
             console.log('error submit!!');
             
             return false;
           }
         });
-      },
-      resetForm(formName) {
-        this.$refs[formName].resetFields();
       },
     handleEdit(index, row) {
       console.log(index, row);
